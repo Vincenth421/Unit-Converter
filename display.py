@@ -46,8 +46,13 @@ def generate_window():
             if is_negative:
                 amt = -amt
 
-            ret = units.convert(amt, from_variable.get(), to_variable.get())
-            result_str = str(amt) + " " + from_unit + " is " + str(ret) + " " + to_unit
+            ret = units.convert(amt, from_unit, to_unit)
+            result_str = str(amt) + " " + from_unit + " is "
+
+            if to_unit == "in":
+                result_str += str(ret // 12) + " ft " + str(ret % 12) + " in"
+            else:
+                result_str = + str(ret) + " " + to_unit
 
             input_box.delete("1.0", tk.END)
 

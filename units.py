@@ -1,11 +1,12 @@
 # Helper to keep track of units
 
 # available units
-options = ["cm", "in", "kg", "lb(s)", "°C", "°F", "K"]
+options = ["cm", "in", "kg", "lb(s)", "°C", "°F", "K", "ft/in"]
 
 # valid units to convert from key to value(s)
-valid_conversions = {"cm": ["in"],
-                     "in": ["cm"],
+valid_conversions = {"cm": ["ft/in", "in"],
+                     "ft/in" : ["cm", "in"],
+                     "in": ["cm", "ft/in"],
                      "kg": ["lb(s)"],
                      "lb(s)": ["kg"],
                      "°C": ["°F", "K"],
@@ -13,20 +14,21 @@ valid_conversions = {"cm": ["in"],
                      "K": ["°C", "°F"]}
 
 # formulas to convert from key to value
-conversion_formulas = {"cm": {"in": lambda cm: round(cm / 2.54)},
-                       "in": {"cm": (lambda inch: round(inch * 2.54))},
-                       "kg": {"lb(s)": lambda kg: round(kg * 2.205)},
-                       "lb(s)": {"kg": lambda lb: round(lb / 2.205)},
-                       "°C": {"°F": lambda c: round(c * (9/5) + 32), "K": lambda c: round(c + 273.15)},
-                       "°F": {"°C": lambda f: round((f - 32) * (5/9)),
-                              "K": lambda f: round(f - 32 * (5/9) + 273.15)},
-                       "K": {"°C": lambda k: round(k - 273.15), "°F": lambda k: round((k - 273.15) * (9/5) + 32)}}
+conversion_formulas = {"cm": {"in": lambda cm: cm / 2.54, "ft/in":  lambda cm: cm / 2.54},
+                       "in": {"cm": lambda inch: inch * 2.54, "ft/in": lambda inch: inch},
+                       "ft/in": {"cm": lambda inch: inch * 2.54},
+                       "kg": {"lb(s)": lambda kg: kg * 2.205},
+                       "lb(s)": {"kg": lambda lb: lb / 2.205},
+                       "°C": {"°F": lambda c: c * (9/5) + 32, "K": lambda c: c + 273.15},
+                       "°F": {"°C": lambda f: (f - 32) * (5/9),
+                              "K": lambda f: f - 32 * (5/9) + 273.15},
+                       "K": {"°C": lambda k: k - 273.15, "°F": lambda k: (k - 273.15) * (9/5) + 32}}
 
 
 def convert(amount, from_unit, to_unit):
     """ Converts to unit with the appropriate formula """
 
-    return conversion_formulas[from_unit][to_unit](amount)
+    return round(conversion_formulas[from_unit][to_unit](amount))
 
 
 def check():
