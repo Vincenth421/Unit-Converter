@@ -1,3 +1,4 @@
+# Main file to run the program.
 import display
 
 
