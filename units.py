@@ -1,4 +1,4 @@
-# Handles units and conversion
+# Available units and their formulas
 
 # Available units. Used as reference to make sure all units accounted for in the following dictionaries.
 options = ["cm", "ft/in", "in", "kg", "lb(s)", "°C", "°F", "K"]
@@ -21,21 +21,14 @@ conversion_formulas = {"cm": {"in": lambda cm: cm / 2.54, "ft/in": lambda cm: cm
                        "lb(s)": {"kg": lambda lb: lb / 2.205},
                        "°C": {"°F": lambda c: c * (9/5) + 32, "K": lambda c: c + 273.15},
                        "°F": {"°C": lambda f: (f - 32) * (5/9),
-                              "K": lambda f: f - 32 * (5/9) + 273.15},
+                              "K": lambda f: (f - 32) * (5/9) + 273.15},
                        "K": {"°C": lambda k: k - 273.15, "°F": lambda k: (k - 273.15) * (9/5) + 32}}
-
-
-def convert(amount, from_unit, to_unit):
-    """ Converts to unit with the appropriate formula """
-
-    return round(conversion_formulas[from_unit][to_unit](amount))
 
 
 def check_keys():
     """ Checks all keys are accounted for. Uses options array as reference """
 
     valid_keys = valid_conversions.keys()
-
     formula_keys = conversion_formulas.keys()
 
     # add values if not in dicts
@@ -69,14 +62,6 @@ def check_valid_formulas():
 
     else:
         print("All units matched")
-
-
-def get_valid_options(from_str):
-    return valid_conversions[from_str]
-
-
-def get_options():
-    return options
 
 
 if __name__ == '__main__':

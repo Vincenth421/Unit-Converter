@@ -1,7 +1,7 @@
 # Generates the display
 import tkinter as tk
 import handler
-import converter
+import units
 
 
 def generate_window():
@@ -26,13 +26,13 @@ def generate_window():
         if clear:
             input_box.delete("1.0", tk.END)
 
-    def update_dropdown(variable, dropdown, unit):
+    def update_dropdown(variable, dropdown, input_unit):
         # clear "to unit" dropdown options
         variable.set("")
         dropdown["menu"].delete(0, "end")
 
         # Insert list of new options (tk._setit hooks them up to var)
-        new_choices = converter.get_valid_options(unit)
+        new_choices = units.valid_conversions[input_unit]
         for choice in new_choices:
             dropdown["menu"].add_command(label=choice, command=tk._setit(variable, choice))
 
@@ -41,6 +41,7 @@ def generate_window():
 
     def update_to_dropdown(input_unit):
         nonlocal prev_from
+        # only update "to" dropdown if "from" changes units
         if prev_from != from_variable.get():
             update_dropdown(to_variable, to_dropdown, input_unit)
             prev_from = from_variable.get()
@@ -48,7 +49,7 @@ def generate_window():
     def update_from_dropdown(input_unit):
         """Changes "from" unit and updates "to" dropdown if "to" dropdown is selected first"""
         if from_variable.get() == "None":
-            valid_choices = converter.get_valid_options(input_unit)
+            valid_choices = units.valid_conversions[input_unit]
             input_unit = valid_choices[0]
             from_variable.set(input_unit)
             update_dropdown(to_variable, to_dropdown, input_unit)
@@ -69,7 +70,7 @@ def generate_window():
     input_box.pack(padx=5, pady=5, side=tk.LEFT)
 
     # set from unit dropdown
-    from_options = converter.get_options()
+    from_options = units.options
     from_variable = tk.StringVar(main_frame)
     from_variable.set("None")
     prev_from = from_variable.get()
@@ -80,7 +81,7 @@ def generate_window():
     to_label.pack(side=tk.LEFT)
 
     # set to unit dropdown
-    to_options = converter.get_options()
+    to_options = units.options
     to_variable = tk.StringVar(main_frame)
     to_variable.set("None")
     to_dropdown = tk.OptionMenu(main_frame, to_variable, *to_options, command=update_from_dropdown)
